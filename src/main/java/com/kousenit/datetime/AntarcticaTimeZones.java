@@ -5,7 +5,6 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static java.util.Comparator.comparingInt;
 
@@ -15,13 +14,12 @@ public class AntarcticaTimeZones {
         Set<String> availableZoneIds = ZoneId.getAvailableZoneIds();
         System.out.println("There are " + availableZoneIds.size() + " zoneids around the world");
         List<ZonedDateTime> antarcticZones =
-                availableZoneIds
-                        .stream()  // Stream<String>
+                availableZoneIds.stream()  // Stream<String>
                         .filter(regionId -> regionId.contains("Antarctica"))
                         .map(ZoneId::of)  // Stream<ZoneId>
                         .map(now::atZone) // Stream<ZonedDateTime>
                         .sorted(comparingInt(zoneId -> zoneId.getOffset().getTotalSeconds()))
-                        .collect(Collectors.toList());
+                        .toList();
 
         antarcticZones.forEach(zdt ->
                 System.out.printf("%7s: %25s %7s%n", zdt.getOffset(), zdt.getZone(),

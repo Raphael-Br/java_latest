@@ -2,17 +2,16 @@ package com.kousenit.http;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.google.gson.*;
-import com.squareup.moshi.JsonAdapter;
-import com.squareup.moshi.Moshi;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+
+import static java.net.http.HttpRequest.BodyPublishers;
+import static java.net.http.HttpRequest.newBuilder;
 
 public class AstroClient {
 
@@ -21,7 +20,7 @@ public class AstroClient {
                 .connectTimeout(Duration.ofSeconds(2))
                 .build();
 
-        HttpRequest request = HttpRequest.newBuilder()
+        HttpRequest request = newBuilder()
                 .uri(URI.create("http://api.open-notify.org/astros.json"))
                 .GET() // default (could leave that out)
                 .build();
@@ -29,8 +28,8 @@ public class AstroClient {
         try {
             HttpResponse<String> response =
                     client.send(request, HttpResponse.BodyHandlers.ofString());
-            System.out.println(response.statusCode());
-            System.out.println(response.headers());
+            System.out.println("Status code: " + response.statusCode());
+            System.out.println("Headers: " + response.headers());
             return response.body();
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
@@ -38,11 +37,26 @@ public class AstroClient {
         return "";
     }
 
+    public HttpResponse<Void> getResponseToHeadRequest(String site) {
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = newBuilder()
+                .uri(URI.create(site))
+                .method("HEAD", BodyPublishers.noBody()) // NOTE: .HEAD() in Java 18+
+                .build();
+        HttpResponse<Void> response = null;
+        try {
+            response = client.send(request, HttpResponse.BodyHandlers.discarding());
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+        return response;
+    }
+
     public AstroResponse getAstroResponse() {
         // Gson does not work yet
-//        return new Gson().fromJson(getJsonResponse(), AstroResponse.class);
+        // return new Gson().fromJson(getJsonResponse(), AstroResponse.class);
 
-        // Neither does Moshi
+        // Moshi works!
 //        Moshi moshi = new Moshi.Builder().build();
 //        JsonAdapter<AstroResponse> adapter = moshi.adapter(AstroResponse.class);
 //        try {

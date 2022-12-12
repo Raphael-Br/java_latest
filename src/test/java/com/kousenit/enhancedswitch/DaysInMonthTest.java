@@ -10,11 +10,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class DaysInMonthTest {
     @ParameterizedTest(name = "Checking days in {0}")
     @EnumSource(Month.class)
-    void daysIn2020(Month month) {
-        int days = DaysInMonth.getDays(month, 2020);
+    void daysIn2022(Month month) {
+        int days = DaysInMonth.getDays(month, 2022);
         switch (month) {
             case FEBRUARY:
-                assertEquals(29, days);
+                assertEquals(28, days);
                 break;
             case APRIL:
             case JUNE:
@@ -29,12 +29,23 @@ class DaysInMonthTest {
 
     @ParameterizedTest(name = "Checking days in {0}")
     @EnumSource(Month.class)
-    void daysIn2020Enhanced(Month month) {
-        int days = DaysInMonth.getDays(month, 2020);
+    void daysIn2022Enhanced(Month month) {
+        int days = DaysInMonth.getDays(month, 2022);
         switch (month) {
-            case FEBRUARY -> assertEquals(29, days);
+            case FEBRUARY -> assertEquals(28, days);
             case APRIL, JUNE, SEPTEMBER, NOVEMBER -> assertEquals(30, days);
             default -> assertEquals(31, days);
+        }
+    }
+
+    @ParameterizedTest(name = "Checking days in {0}")
+    @EnumSource(Month.class)
+    void daysIn2022Exhaustive(Month month) {
+        int days = DaysInMonth.getDays(month, 2022);
+        switch (month) {
+            case FEBRUARY -> assertEquals(28, days);
+            case APRIL, JUNE, SEPTEMBER, NOVEMBER -> assertEquals(30, days);
+            // case JANUARY, MARCH, MAY, JULY, OCTOBER, DECEMBER -> assertEquals(31, days);
         }
     }
 }
